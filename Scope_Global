@@ -1,8 +1,22 @@
 #include <iostream>
 using namespace std;
 
+//const修饰的全局变量 默认是内部链接（只在当前源文件有效 不能直接用于其他源文件）
+//const int num = 100;
+//如果必须用在其他源文件 使用只读的全局变量 必须加extern将num转换成外部链接
+//extern const int num = 100;
+
+
 #if 1
+//声明
+extern const int num;
+struct Person
+{
+    int num;
+    char name[32];
+};
 int a = 200;
+
 namespace veryLongName {
     int a = 100;
     void func() { cout << "hello namespace" << endl; }
@@ -35,11 +49,38 @@ void test02()
     func(10);
     func(10, 20);
 }
+
+void test03()
+{
+    //1、c++中 对于基础类型 系统不会给data开辟空间 data放到符号表中
+    const int data = 10;
+    //2、c++中当 对data 取地址的时候 系统就会给data开辟空间
+    int* p = (int*)&data;
+    *p = 2000;
+    cout << "*p = " << *p << endl;      //空间内容修改成功 2000
+    cout << "data = " << data << endl;  //data = 10?
+
+    //2、当以变量的形式 初始化 const修饰的变量 系统会为其开辟空间
+    int b = 200;
+    const int a = b;    //系统直接为a开辟空间 而不会把a放入符号表中
+    p = (int*)&a;
+    *p = 3000;
+    cout << "*p = " << *p << endl;      //3000
+    cout << "a = " << a << endl;        //a = 3000?
+
+    //3、const 自定义数据类型(结构体、对象) 系统会分配空间
+    const Person per = { 100,"lucy" };
+    cout << "num = " << per.num << ", name = " << per.name << endl;//100 lucy
+    Person* p1 = (Person*)&per;
+    p1->num = 2000;
+    cout << "num = " << per.num << ", name = " << per.name << endl;//2000 lucy,修改名字name？
+}
 #endif
 
 int main(int argc, char* argv[])
 {
-    test01(); 
+    test01();
     test02();
+    test03();
     return 0;
 }
