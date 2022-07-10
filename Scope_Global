@@ -1,0 +1,45 @@
+#include <iostream>
+using namespace std;
+
+#if 1
+int a = 200;
+namespace veryLongName {
+    int a = 100;
+    void func() { cout << "hello namespace" << endl; }
+}
+
+void test01()
+{
+    //using直接使用 命名空间中的成员 不会和 全局变量冲突
+    using namespace veryLongName;
+
+    cout << "命名空间中a = " << veryLongName::a << endl;//命名空间中的成员 100
+    cout << "全局变量中a = " << ::a << endl;//200
+
+    //但是func使用的时候 必须加作用域
+    veryLongName::func();
+}
+
+namespace A {
+    //函数重载 函数名+参数 组合代表是函数的入口地址
+    void func() { cout << " 无参的func" << endl; }
+    void func(int a) { cout << " int的func" << endl; }
+    void func(int a, int b) { cout << " int int的func" << endl; }
+}
+
+void test02()
+{
+    //using指明 使用 A中的func 会对 所有的func起作用
+    using A::func;
+    func();
+    func(10);
+    func(10, 20);
+}
+#endif
+
+int main(int argc, char* argv[])
+{
+    test01(); 
+    test02();
+    return 0;
+}
